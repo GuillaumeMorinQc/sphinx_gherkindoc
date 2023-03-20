@@ -4,3 +4,8 @@
 /_docs
 /.mypy_cache
 .coverage
+# Python virtual environment
+.venv
+# Byte-compiled or optimized files
+__pycache__/
+*.py[cod]

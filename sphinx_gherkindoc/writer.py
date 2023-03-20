@@ -23,6 +23,7 @@ from .utils import (
 
 _keywords = (
     "feature",
+    "rule",
     "background",
     "scenario",
     "scenario-outline",
@@ -347,7 +348,23 @@ def feature_to_rst(
         for row in table.rows:
             row = f"{QUOTE}, {QUOTE}".join(map(rst_escape, row))
             output_file.add_output(f"{QUOTE}{row}{QUOTE}", indent_by=indent_by)
-
+    def writeScenario(level: int, obj: behave.model_core.BasicStatement) -> None:
+        included_scenarios = get_all_included_scenarios(obj, include_tags, exclude_tags)
+        # In the event of a feature existing,
+        # but not having scenarios in it,
+        # only exclude the feature (and its description, etc)
+        # if include/exclude logic has been activated.
+        if not included_scenarios and (include_tags or exclude_tags):
+            return None
+        for scenario in included_scenarios:
+            section(level, scenario)
+            tags(scenario.tags, feature)
+            description(scenario, raw_descriptions=raw_descriptions)
+            if integrate_background and feature.background:
+                steps(feature.background.steps, step_format=background_step_format)
+            steps(scenario.steps)
+            output_file.blank_line()
+            examples(scenario, feature)
     # Declare roles in each rST file
     # so that they are available for customization by users.
     for role in AVAILABLE_ROLES:
@@ -390,5 +407,8 @@ def feature_to_rst(
         steps(scenario.steps)
         output_file.blank_line()
         examples(scenario, feature)
+    for rule in feature.rules:
+        section(2,rule)
+        writeScenario(3,rule)
 
     return output_file

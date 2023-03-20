@@ -179,6 +179,7 @@ def test_scan_tree_relative():
                 "empty.feature",
                 "no_scenarios.feature",
                 "nobackground_pytest.feature",
+                "rules.feature",
                 "tags.feature",
                 "tags_pytest.feature",
             ],

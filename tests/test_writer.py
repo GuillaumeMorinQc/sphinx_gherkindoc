@@ -56,6 +56,9 @@ def commented_feature(tmp_path):
 def no_scenarios_feature(tmp_path):
     return read_file(tmp_path, "no_scenarios.feature")
 
+@pytest.fixture()
+def rules_feature(tmp_path):
+    return read_file(tmp_path, "rules.feature")
 
 # writer.toctree
 def test_toctree(feature_tree):
@@ -165,6 +168,9 @@ def test_filter_by_tags_logic_is_triggered(tags_feature_file):
         include_tags=["some-tag-no-scenario-or-feature-has"],
     )
     assert results is None
+def test_feature_withfeature_to_rst_rules(rules_feature):
+    results = writer.feature_to_rst(rules_feature, rules_feature.parent)
+    assert results._output == rst_output.rules_rst
 
 
 def test_empty_feature(empty_feature):
